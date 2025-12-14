@@ -2,9 +2,9 @@ name: Run checks and tests
 on:
   workflow_dispatch:
   push:
-    branches: [ main, develop, feature/gh-actions ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,8 +13,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch
-        run: cargo fetch
 
       - name: Check
         run: cargo check --all-features
