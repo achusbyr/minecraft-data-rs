@@ -46,28 +46,34 @@ mod data_repo {
         let version_oid = Oid::from_str(&metadata.minecraft_data_commit).expect("invalid oid");
 
         let repo = if repo_path.exists() {
-            let repo = Repository::open(&repo_path).expect("failed to open git repo");
-            let head_oid = repo
-                .head()
-                .expect("no head found in repo")
-                .peel_to_commit()
-                .expect("head is not a commit")
-                .as_object()
-                .id();
-            if head_oid != version_oid {
-                fs::remove_dir_all(&repo_path).expect("could not delete repository");
-                Repository::clone(&metadata.minecraft_data_repo, repo_path)
-                    .expect("failed to clone repo")
-            } else {
-                repo
+            match Repository::open(&repo_path) {
+                Ok(repo) => {
+                    if repo.find_commit(version_oid).is_ok() {
+                        repo
+                    } else {
+                        // Drop the repo handle before deleting the directory
+                        drop(repo);
+                        fs::remove_dir_all(&repo_path).expect("could not delete existing repository");
+                        Repository::clone(&metadata.minecraft_data_repo, &repo_path)
+                            .expect("failed to clone minecraft-data repo")
+                    }
+                }
+                Err(_) => {
+                    fs::remove_dir_all(&repo_path).expect("could not delete existing repository");
+                    Repository::clone(&metadata.minecraft_data_repo, &repo_path)
+                        .expect("failed to clone minecraft-data repo")
+                }
             }
         } else {
-            Repository::clone(&metadata.minecraft_data_repo, repo_path)
-                .expect("failed to clone repo")
+            Repository::clone(&metadata.minecraft_data_repo, &repo_path)
+                .expect("failed to clone minecraft-data repo")
         };
 
         repo.set_head_detached(version_oid)
             .expect("failed set head");
-        repo.checkout_head(None).expect("failed checkout index")
+        
+        let mut checkout = git2::build::CheckoutBuilder::new();
+        checkout.force();
+        repo.checkout_head(Some(&mut checkout)).expect("failed checkout index")
     }
 }
