@@ -3,7 +3,7 @@ pub mod types;
 
 pub use packet_mapper::{PacketMapper, PacketMapperSwitch, PacketSwitch};
 use serde::de::{MapAccess, Visitor};
-use serde::{de, Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, de};
 use serde_json::Value;
 use std::borrow::Cow;
 use std::fmt;

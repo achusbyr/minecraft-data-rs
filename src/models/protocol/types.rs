@@ -201,14 +201,13 @@ impl NativeType {
     }
 
     pub fn new_pstring(layout: Cow<Value>) -> Option<NativeType> {
-        if let Value::Object(mut obj) = layout.into_owned() {
-            if let Value::String(count_type) = obj.remove("countType").unwrap_or_default() {
-                if let Some(count_type) = NativeType::new(&count_type, Cow::Owned(Value::Null)) {
-                    return Some(NativeType::PString {
-                        count_type: Box::new(count_type),
-                    });
-                }
-            }
+        if let Value::Object(mut obj) = layout.into_owned()
+            && let Value::String(count_type) = obj.remove("countType").unwrap_or_default()
+            && let Some(count_type) = NativeType::new(&count_type, Cow::Owned(Value::Null))
+        {
+            return Some(NativeType::PString {
+                count_type: Box::new(count_type),
+            });
         }
         None
     }
@@ -297,7 +296,8 @@ impl NativeType {
                     .as_str()
                     .unwrap_or_default(),
                 Cow::Owned(Value::Null),
-            ).unwrap_or(NativeType::VarInt);
+            )
+            .unwrap_or(NativeType::VarInt);
             let inner_type = build_inner_type(obj.remove("type").unwrap_or_default());
             return Some(NativeType::Array {
                 count_type: Box::new(value),
@@ -354,14 +354,13 @@ impl NativeType {
     }
 
     pub fn new_buffer(layout: Cow<Value>) -> Option<NativeType> {
-        if let Value::Object(mut obj) = layout.into_owned() {
-            if let Value::String(count_type) = obj.remove("countType").unwrap_or_default() {
-                if let Some(count_type) = NativeType::new(&count_type, Cow::Owned(Value::Null)) {
-                    return Some(NativeType::PString {
-                        count_type: Box::new(count_type),
-                    });
-                }
-            }
+        if let Value::Object(mut obj) = layout.into_owned()
+            && let Value::String(count_type) = obj.remove("countType").unwrap_or_default()
+            && let Some(count_type) = NativeType::new(&count_type, Cow::Owned(Value::Null))
+        {
+            return Some(NativeType::PString {
+                count_type: Box::new(count_type),
+            });
         }
         None
     }
@@ -371,8 +370,7 @@ impl NativeType {
 pub(crate) fn build_inner_type(value: Value) -> Box<PacketDataType> {
     match value {
         Value::String(simple_type) => {
-            return if let Some(simple_type) = NativeType::new(&simple_type, Cow::Owned(Value::Null))
-            {
+            if let Some(simple_type) = NativeType::new(&simple_type, Cow::Owned(Value::Null)) {
                 Box::new(PacketDataType::Native(simple_type))
             } else {
                 // Probably a reference to a built type
@@ -380,7 +378,7 @@ pub(crate) fn build_inner_type(value: Value) -> Box<PacketDataType> {
                     name: Some(simple_type.into()),
                     value: Value::Null,
                 })
-            };
+            }
         }
         Value::Array(mut array) => {
             if array.len() != 2 {
@@ -467,7 +465,7 @@ impl PacketDataType {
                     let inner_type_name = array.pop().unwrap();
                     if let Value::String(inner_type_name) = inner_type_name {
                         return if let Some(type_) =
-                        NativeType::new(&inner_type_name, Cow::Borrowed(&inner_type_values))
+                            NativeType::new(&inner_type_name, Cow::Borrowed(&inner_type_values))
                         {
                             Some(PacketDataType::Built {
                                 name: TypeName::Named(key.to_string()),
@@ -505,8 +503,8 @@ use serde::de::MapAccess;
 
 impl<'de> Deserialize<'de> for PacketDataTypes {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         struct PacketDataTypesVisitor;
 
@@ -518,8 +516,8 @@ impl<'de> Deserialize<'de> for PacketDataTypes {
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<PacketDataTypes, V::Error>
-                where
-                    V: MapAccess<'de>,
+            where
+                V: MapAccess<'de>,
             {
                 let mut types = Vec::new();
                 while let Some(key) = map.next_key::<String>()? {

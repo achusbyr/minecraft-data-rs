@@ -1,4 +1,4 @@
-use crate::data::{get_version_specific_file, PROTOCOL_FILE};
+use crate::data::{PROTOCOL_FILE, get_version_specific_file};
 use crate::models::version::Version;
 use crate::{DataError, DataResult};
 use std::sync::Arc;

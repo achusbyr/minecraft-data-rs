@@ -1,8 +1,8 @@
-use crate::data::{get_version_specific_file, BLOCKS_FILE, BLOCK_COLLISION_SHAPES_FILE};
+use crate::DataResult;
+use crate::data::{BLOCK_COLLISION_SHAPES_FILE, BLOCKS_FILE, get_version_specific_file};
 use crate::models::block::Block;
 use crate::models::block_collision_shapes::BlockCollisionShapes;
 use crate::models::version::Version;
-use crate::DataResult;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -34,7 +34,7 @@ impl Blocks {
                 blocks_map.insert(s, b.clone());
             });
         });
-        
+
         Ok(blocks_map)
     }
 

@@ -56,7 +56,7 @@ pub enum Drop {
         drop: DropId,
         min_count: Option<f32>,
         max_count: Option<f32>,
-    }
+    },
 }
 
 #[derive(Deserialize, Debug, Clone)]

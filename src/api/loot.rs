@@ -1,8 +1,8 @@
-use crate::data::{get_version_specific_file, BLOCK_LOOT_FILE, ENTITY_LOOT_FILE};
+use crate::DataResult;
+use crate::data::{BLOCK_LOOT_FILE, ENTITY_LOOT_FILE, get_version_specific_file};
 use crate::models::block_loot::BlockLoot;
 use crate::models::entity_loot::EntityLoot;
 use crate::models::version::Version;
-use crate::DataResult;
 use std::collections::HashMap;
 use std::sync::Arc;
 

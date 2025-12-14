@@ -1,3 +1,4 @@
+use crate::DataResult;
 pub use crate::api::biomes::Biomes;
 pub use crate::api::blocks::Blocks;
 pub use crate::api::enchantments::Enchantments;
@@ -7,7 +8,6 @@ pub use crate::api::items::Items;
 pub use crate::api::loot::Loot;
 pub use crate::api::recipes::Recipes;
 use crate::models::version::Version;
-use crate::DataResult;
 use std::sync::Arc;
 
 #[cfg(test)]

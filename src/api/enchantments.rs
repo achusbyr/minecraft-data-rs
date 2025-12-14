@@ -1,4 +1,4 @@
-use crate::data::{get_version_specific_file, ENCHANTMENTS_FILE};
+use crate::data::{ENCHANTMENTS_FILE, get_version_specific_file};
 use crate::models::enchantment::Enchantment;
 use crate::models::version::Version;
 use crate::{DataError, DataResult};
@@ -46,7 +46,7 @@ impl Enchantments {
         Ok(self
             .enchantments_array()?
             .into_iter()
-            .group_by(|e| e.category.clone())
+            .chunk_by(|e| e.category.clone())
             .into_iter()
             .map(|(key, group)| (key, group.collect()))
             .collect())

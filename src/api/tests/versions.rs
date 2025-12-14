@@ -1,5 +1,5 @@
-use crate::api::versions::{latest_stable, versions, versions_by_minecraft_version};
 use crate::Api;
+use crate::api::versions::{latest_stable, versions, versions_by_minecraft_version};
 
 #[test]
 fn test_versions() {

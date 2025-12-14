@@ -1,6 +1,6 @@
 #![cfg(feature = "api")]
-use crate::api::versions::{available_versions, versions};
 use crate::api::Api;
+use crate::api::versions::{available_versions, versions};
 use crate::models::version::Version;
 
 mod biomes;

@@ -16,15 +16,15 @@ mod data_repo {
 
     #[derive(Clone, Debug, Deserialize)]
     struct Metadata {
+        minecraft_data_owner: String,
         minecraft_data_repo: String,
-        minecraft_data_commit: String,
     }
 
     pub fn init_repo() {
         println!("cargo:rerun-if-env-changed=MINECRAFT_DATA_REPO_PATH");
         println!("cargo:rerun-if-changed=Cargo.toml");
 
-        let manifest = Manifest::<Metadata>::from_path_with_metadata(PathBuf::from("Cargo.toml"))
+        let manifest = Manifest::<Metadata>::from_slice_with_metadata(include_bytes!("Cargo.toml"))
             .expect("Failed to read manifest (Cargo.toml)");
         let metadata = manifest
             .package
@@ -43,37 +43,49 @@ mod data_repo {
             repo_path.to_string_lossy()
         );
 
-        let version_oid = Oid::from_str(&metadata.minecraft_data_commit).expect("invalid oid");
+        let version_oid: Oid;
+
+        let repository_link = format!(
+            "https://github.com/{}/{}.git",
+            metadata.minecraft_data_owner, metadata.minecraft_data_repo
+        );
 
         let repo = if repo_path.exists() {
             match Repository::open(&repo_path) {
                 Ok(repo) => {
+                    version_oid = repo.head().unwrap().target().unwrap();
                     if repo.find_commit(version_oid).is_ok() {
                         repo
                     } else {
                         // Drop the repo handle before deleting the directory
                         drop(repo);
-                        fs::remove_dir_all(&repo_path).expect("could not delete existing repository");
-                        Repository::clone(&metadata.minecraft_data_repo, &repo_path)
+                        fs::remove_dir_all(&repo_path)
+                            .expect("could not delete existing repository");
+                        Repository::clone(&repository_link, &repo_path)
                             .expect("failed to clone minecraft-data repo")
                     }
                 }
                 Err(_) => {
                     fs::remove_dir_all(&repo_path).expect("could not delete existing repository");
-                    Repository::clone(&metadata.minecraft_data_repo, &repo_path)
-                        .expect("failed to clone minecraft-data repo")
+                    let repo = Repository::clone(&repository_link, &repo_path)
+                        .expect("failed to clone minecraft-data repo");
+                    version_oid = repo.head().unwrap().target().unwrap();
+                    repo
                 }
             }
         } else {
-            Repository::clone(&metadata.minecraft_data_repo, &repo_path)
-                .expect("failed to clone minecraft-data repo")
+            let repo = Repository::clone(&repository_link, &repo_path)
+                .expect("failed to clone minecraft-data repo");
+            version_oid = repo.head().unwrap().target().unwrap();
+            repo
         };
 
         repo.set_head_detached(version_oid)
             .expect("failed set head");
-        
+
         let mut checkout = git2::build::CheckoutBuilder::new();
         checkout.force();
-        repo.checkout_head(Some(&mut checkout)).expect("failed checkout index")
+        repo.checkout_head(Some(&mut checkout))
+            .expect("failed checkout index")
     }
 }

@@ -1,4 +1,4 @@
-use crate::data::{get_version_specific_file, RECIPES_FILE};
+use crate::data::{RECIPES_FILE, get_version_specific_file};
 use crate::models::recipe::Recipe;
 use crate::models::version::Version;
 use crate::{DataError, DataResult};

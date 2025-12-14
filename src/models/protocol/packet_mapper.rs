@@ -4,7 +4,7 @@ use std::fmt;
 use std::num::ParseIntError;
 
 use serde::de::{SeqAccess, Visitor};
-use serde::{de, Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, de};
 use serde_json::Value;
 
 #[derive(Deserialize, Debug, Clone)]

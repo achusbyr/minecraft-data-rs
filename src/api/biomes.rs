@@ -1,7 +1,7 @@
-use crate::data::{get_version_specific_file, BIOMES_FILE};
+use crate::DataResult;
+use crate::data::{BIOMES_FILE, get_version_specific_file};
 use crate::models::biome::Biome;
 use crate::models::version::Version;
-use crate::DataResult;
 use std::collections::HashMap;
 use std::sync::Arc;
 

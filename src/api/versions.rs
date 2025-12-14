@@ -1,4 +1,4 @@
-use crate::data::{get_common_file, PROTOCOL_VERSIONS_FILE, VERSIONS_FILE};
+use crate::data::{PROTOCOL_VERSIONS_FILE, VERSIONS_FILE, get_common_file};
 use crate::models::version::Version;
 use crate::{DataError, DataResult};
 use itertools::Itertools;
