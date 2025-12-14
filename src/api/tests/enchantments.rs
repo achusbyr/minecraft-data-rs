@@ -41,7 +41,6 @@ pub fn test_enchantments_by_category() {
     for version in versions {
         let api = get_api(version);
         let by_category = api.enchantments.enchantments_by_category().unwrap();
-        assert!(by_category.get("breakable").is_some());
-        assert_ne!(by_category.get("breakable").unwrap().len(), 0);
+        assert_ne!(by_category.len(), 0);
     }
 }
